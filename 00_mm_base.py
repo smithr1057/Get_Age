@@ -1,5 +1,6 @@
 import pandas
 import random
+from datetime import date
 # Functions
 
 
@@ -195,6 +196,36 @@ add_dollars = ['Ticket Price', 'Surcharge', 'Total', 'Profit']
 for var_item in add_dollars:
     mini_movie_frame[var_item] = mini_movie_frame[var_item].apply(currency)
 
+
+# *** Get current date for heading and filename ***
+# Get today's date
+today = date.today()
+
+# Get day, month and year as individual strings
+day = today.strftime("%d")
+month = today.strftime("%m")
+year = today.strftime("%y")
+
+heading = f"----- Mini Movie Fundraiser Ticket Data ({day}/{month}/{year}) -----\n"
+filename = f"MMF_{year}_{month}_{day}"
+
+# Change frame to a string so that we can export it to file
+mini_movie_string = pandas.DataFrame.to_string(mini_movie_frame)
+
+# Create strings for printing....
+ticket_cost_heading = "\n----- Ticket Cost / Profit -----"
+total_ticket_sales = f"Total Ticket Sales: {currency(total)}"
+total_profit = f"Total Profit: {currency(profit)}"
+
+if tickets_sold == max_tickets:
+    sales_status = "\nCongrats you have sold all the tickets"
+else:
+    sales_status = f"\nYou have sold {tickets_sold} ticket/s. there is {max_tickets - tickets_sold} ticket/s remaining"
+
+winner_heading = '\n---- Raffle Winner ----'
+winner_text = f"Congratulations {winner_name}. You have won {currency(total_won)} " \
+              f"ie: your ticket is free!"
+
 print("---- Ticket Data ----")
 print()
 
@@ -204,24 +235,19 @@ print(mini_movie_frame)
 
 print()
 
-print("---- Ticket Cost / Profit ----")
+print(ticket_cost_heading)
 
 # Output total ticket sales and profit
-print(f"Total Ticket Sales: ${total:.2f}")
-print(f"Total Profit: ${profit:.2f}")
+print(total_ticket_sales)
+print(total_profit)
 
 print()
 
 # Output raffle winner
-print('---- Raffle Winner ----')
-print(f"Congratulations {winner_name}. You have won {currency(total_won)} "
-      f"ie: your ticket is free!")
+print(winner_heading)
+print(winner_text)
 
 # Output number of tickets sold
-if tickets_sold == max_tickets:
-    print("Congrats you have sold all the tickets")
-    print()
-else:
-    print(f"You have sold {tickets_sold} ticket/s. there is {max_tickets - tickets_sold} ticket/s remaining")
+print(sales_status)
 
 
