@@ -1,4 +1,5 @@
 import pandas
+import random
 # Functions
 
 
@@ -73,6 +74,30 @@ def currency(x):
     return f"${x:.2f}"
 
 
+# Displays instructions
+def instructions():
+    print('''\n
+        ***** Instructions *****
+        
+        For each ticket, enter ...
+        - The person's name (can't be blank)
+        - Age (between 12 and 12)
+        - Payment method (cash / credit)
+        
+        When you have entered all the users, press 'xxx' to quit.
+        
+        The program will then display the ticket details 
+        including the cost of each ticket, the total cost
+        and the total profit.
+        
+        This information will also be automatically written to 
+        a text file.
+        
+        **************************''')
+
+    return ""
+
+
 # Main routine
 
 yes_no_list = ['yes', 'no']
@@ -98,18 +123,21 @@ want_instructions = string_checker("Do you want instructions? ", 1, yes_no_list)
 
 
 if want_instructions == "yes":
-    print("***Instructions***")
+    instructions()
 print()
 
 # Loop to sell tickets
 while tickets_sold < max_tickets:
     name = not_blank("Enter you name (or 'xxx' to quit): ")
 
-    if name == 'xxx':
+    if name == 'xxx' and len(all_names) > 0:
         print()
         break
+    elif name == 'xxx':
+        print("You must sell at least ONE ticket before quitting")
+        continue
 
-    age = num_check("Enter your age: ")
+    age = num_check("Age: ")
 
     if 12 <= age <= 120:
         pass
@@ -141,7 +169,6 @@ while tickets_sold < max_tickets:
     all_surcharge.append(surcharge)
 
 mini_movie_frame = pandas.DataFrame(mini_movie_dict)
-mini_movie_frame = mini_movie_frame.set_index('Name')
 
 # Calculate the total ticket cost (ticket + surcharge)
 mini_movie_frame['Total'] = mini_movie_frame['Surcharge'] \
@@ -149,6 +176,15 @@ mini_movie_frame['Total'] = mini_movie_frame['Surcharge'] \
 
 # Calculate the profit for each ticket (ticket price - 5)
 mini_movie_frame['Profit'] = mini_movie_frame['Ticket Price'] - 5
+
+# Choose a winner from our name list
+winner_name = random.choice(all_names)
+
+# Get position of winner name in list
+win_index = all_names.index(winner_name)
+
+# Look up total amount won (ticket price + surcharge
+total_won = mini_movie_frame.at[win_index, 'Total']
 
 # calculate ticket and profit totals
 total = mini_movie_frame['Total'].sum()
@@ -162,7 +198,8 @@ for var_item in add_dollars:
 print("---- Ticket Data ----")
 print()
 
-# Output table with ticket data
+# Output table with ticket data and set index at end (before printing)
+mini_movie_frame = mini_movie_frame.set_index('Name')
 print(mini_movie_frame)
 
 print()
@@ -173,9 +210,18 @@ print("---- Ticket Cost / Profit ----")
 print(f"Total Ticket Sales: ${total:.2f}")
 print(f"Total Profit: ${profit:.2f}")
 
+print()
+
+# Output raffle winner
+print('---- Raffle Winner ----')
+print(f"Congratulations {winner_name}. You have won {currency(total_won)} "
+      f"ie: your ticket is free!")
+
 # Output number of tickets sold
 if tickets_sold == max_tickets:
     print("Congrats you have sold all the tickets")
-    print("")
+    print()
 else:
     print(f"You have sold {tickets_sold} ticket/s. there is {max_tickets - tickets_sold} ticket/s remaining")
+
+
