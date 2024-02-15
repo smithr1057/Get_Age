@@ -206,7 +206,7 @@ day = today.strftime("%d")
 month = today.strftime("%m")
 year = today.strftime("%y")
 
-heading = f"----- Mini Movie Fundraiser Ticket Data ({day}/{month}/{year}) -----\n"
+heading = f"\n----- Mini Movie Fundraiser Ticket Data ({day}/{month}/{year}) -----\n"
 filename = f"MMF_{year}_{month}_{day}"
 
 # Change frame to a string so that we can export it to file
@@ -217,37 +217,38 @@ ticket_cost_heading = "\n----- Ticket Cost / Profit -----"
 total_ticket_sales = f"Total Ticket Sales: {currency(total)}"
 total_profit = f"Total Profit: {currency(profit)}"
 
+# Output tickets sold and how many if any are left
 if tickets_sold == max_tickets:
     sales_status = "\nCongrats you have sold all the tickets"
 else:
     sales_status = f"\nYou have sold {tickets_sold} ticket/s. there is {max_tickets - tickets_sold} ticket/s remaining"
 
+
 winner_heading = '\n---- Raffle Winner ----'
 winner_text = f"Congratulations {winner_name}. You have won {currency(total_won)} " \
               f"ie: your ticket is free!"
 
-print("---- Ticket Data ----")
-print()
-
-# Output table with ticket data and set index at end (before printing)
+# set index
 mini_movie_frame = mini_movie_frame.set_index('Name')
-print(mini_movie_frame)
 
-print()
+# list holding content to print / write to file
+to_write = [heading, mini_movie_string, ticket_cost_heading,
+            total_ticket_sales, total_profit, sales_status,
+            winner_heading, winner_text]
 
-print(ticket_cost_heading)
+# print output
+for item in to_write:
+    print(item)
 
-# Output total ticket sales and profit
-print(total_ticket_sales)
-print(total_profit)
+# Write output to file
+# Create file to hold data (add.txt extension)
+write_to = f"{filename}.txt"
+text_file = open(write_to, "w+")
 
-print()
+for item in to_write:
+    text_file.write(item)
+    text_file.write("\n")
 
-# Output raffle winner
-print(winner_heading)
-print(winner_text)
-
-# Output number of tickets sold
-print(sales_status)
-
+# Close file
+text_file.close()
 
